@@ -1,0 +1,185 @@
+#!/bin/bash
+#author: xiaoying
+namelist=(liuhao wangshenyue xuzheng taoyu zhuguangwen xiaoying zhoucong)
+#1.Add groupname
+for grpname in ${namelist[@]}
+do
+    [ "$grpname" != "" ] &&  groupadd -r $grpname
+done
+#2.Add multiple users to the corresponding user group
+for username in ${namelist[@]}
+do
+    #userdel -r $username
+   if  [ "$username" = "${namelist[0]}" ];then
+    #mkdir -p /home/${namelist[0]}/.ssh/
+    #touch /home/${namelist[0]}/.ssh/authorized_keys
+    useradd -g ${namelist[0]} -s /bin/bash -d /home/${namelist[0]} -m ${namelist[0]}
+    cp /etc/skel/.bash_logout /home/${namelist[0]}
+    cp /etc/skel/.bashrc /home/${namelist[0]}
+    cp /etc/skel/.profile /home/${namelist[0]}
+    cd /home/${namelist[0]}; mkdir -p .ssh; touch .ssh/authorized_keys
+    echo "${namelist[0]}:${namelist[0]}" | chpasswd
+    chown -R ${namelist[0]}.${namelist[0]} /home/${namelist[0]}
+   fi
+
+   if  [ "$username" = "${namelist[1]}" ];then
+    useradd -g ${namelist[1]} -s /bin/bash -d /home/${namelist[1]} -m ${namelist[1]}
+    cp /etc/skel/.bash_logout /home/${namelist[1]}
+    cp /etc/skel/.bashrc /home/${namelist[1]}
+    cp /etc/skel/.profile /home/${namelist[1]}
+    cd /home/${namelist[1]}; mkdir -p .ssh; touch .ssh/authorized_keys
+    echo "${namelist[1]}:${namelist[1]}" | chpasswd
+    chown -R ${namelist[1]}.${namelist[1]} /home/${namelist[1]}
+   fi
+
+   if  [ "$username" = "${namelist[2]}" ];then
+    useradd -g ${namelist[2]} -s /bin/bash -d /home/${namelist[2]} -m ${namelist[2]}
+    cp /etc/skel/.bash_logout /home/${namelist[2]}
+    cp /etc/skel/.bashrc /home/${namelist[2]}
+    cp /etc/skel/.profile /home/${namelist[2]}
+    cd /home/${namelist[2]}; mkdir -p .ssh; touch .ssh/authorized_keys
+    echo "${namelist[2]}:${namelist[2]}" | chpasswd
+    chown -R ${namelist[2]}.${namelist[2]} /home/${namelist[2]}
+   fi
+
+   if  [ "$username" = "${namelist[3]}" ];then
+    useradd -g ${namelist[3]} -s /bin/bash -d /home/${namelist[3]} -m ${namelist[3]}
+    cp /etc/skel/.bash_logout /home/${namelist[3]}
+    cp /etc/skel/.bashrc /home/${namelist[3]}
+    cp /etc/skel/.profile /home/${namelist[3]}
+    cd /home/${namelist[3]}; mkdir -p .ssh; touch .ssh/authorized_keys
+    echo "${namelist[3]}:${namelist[3]}" | chpasswd
+    chown -R ${namelist[3]}.${namelist[3]} /home/${namelist[3]}
+   fi
+
+   if  [ "$username" = "${namelist[4]}" ];then
+    useradd -g ${namelist[4]} -s /bin/bash -d /home/${namelist[4]} -m ${namelist[4]}
+    cp /etc/skel/.bash_logout /home/${namelist[4]}
+    cp /etc/skel/.bashrc /home/${namelist[4]}
+    cp /etc/skel/.profile /home/${namelist[4]}
+    cd /home/${namelist[4]}; mkdir -p .ssh; touch .ssh/authorized_keys
+    echo "${namelist[4]}:${namelist[4]}" | chpasswd
+    chown -R ${namelist[4]}.${namelist[4]} /home/${namelist[4]}
+   fi
+    
+   if  [ "$username" = "${namelist[5]}" ];then
+    useradd -g ${namelist[5]} -s /bin/bash -d /home/${namelist[5]} -m ${namelist[5]}
+    cp /etc/skel/.bash_logout /home/${namelist[5]}
+    cp /etc/skel/.bashrc /home/${namelist[5]}
+    cp /etc/skel/.profile /home/${namelist[5]}
+    cd /home/${namelist[5]}; mkdir -p .ssh; touch .ssh/authorized_keys
+    echo "${namelist[5]}:${namelist[5]}" | chpasswd
+    chown -R ${namelist[5]}.${namelist[5]} /home/${namelist[5]}
+   fi
+   
+ if  [ "$username" = "${namelist[6]}" ];then
+    useradd -g ${namelist[6]} -s /bin/bash -d /home/${namelist[6]} -m ${namelist[6]}
+    cp /etc/skel/.bash_logout /home/${namelist[6]}
+    cp /etc/skel/.bashrc /home/${namelist[6]}
+    cp /etc/skel/.profile /home/${namelist[6]}
+    cd /home/${namelist[6]}; mkdir -p .ssh; touch .ssh/authorized_keys
+    echo "${namelist[6]}:${namelist[6]}" | chpasswd
+    chown -R ${namelist[6]}.${namelist[6]} /home/${namelist[6]}
+   fi
+done
+#3.backup sshd confg file and modify the file parameters
+cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+set_system_sshdconfig()
+{
+_sshdconfig=/etc/ssh/sshd_config
+_sshconfig=/etc/ssh/ssh_config
+#sed -i "s/GSSAPIAuthentication yes/GSSAPIAuthentication no/g" $_sshdconfig
+#sed -i "s/#UseDNS yes/UseDNS no/g" $_sshdconfig
+sed -i "s/PasswordAuthentication yes/\#PasswordAuthentication yes/g" $_sshdconfig
+#sed -i "s/#PermitRootLogin yes/PermitRootLogin no/g" $_sshdconfig
+#sed -i "s/#PermitEmptyPasswords no/PermitEmptyPasswords no/g" $_sshdconfig
+sed -i '$aPasswordAuthentication no' $_sshdconfig
+sed -i '$aStrictHostKeyChecking no' $_sshconfig
+}
+set_system_sshdconfig
+#4.history command and +timeout set
+cat >> /etc/profile <<EOF
+export HISTTIMEFORMAT="%F %T `whoami` "
+EOF
+source /etc/profile
+#5.user sudo set
+cp /etc/sudoers /etc/sudoers_`date +%Y%m%d`
+chmod u+w /etc/sudoers
+cat >>/etc/sudoers <<EOF
+xiaoying ALL=(ALL) NOPASSWD:ALL
+liuhao ALL=(ALL) NOPASSWD:ALL
+wangshenyue ALL=(ALL) NOPASSWD:ALL
+taoyu ALL=(ALL) NOPASSWD:ALL
+xuzheng ALL=(ALL) NOPASSWD:ALL
+zhuguangwen ALL=(ALL) NOPASSWD:ALL
+zhoucong ALL=(ALL) NOPASSWD:ALL
+EOF
+chmod 440 /etc/sudoers
+#6.user pub key record
+cp /root/.ssh/authorized_keys /root/.ssh/authorized_keys.bak
+addpubkey_record(){
+    for x in ${namelist[@]};
+      do
+    if [ $x = ${namelist[0]} ]; then
+    echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCjSz7VsnggRGPi1Sm2nMMcoyZKnulZBQrfGHRaPa9ACx68PY89mwauzA5+mvylFZetYTK2rCkPpLuvRR61Vs3wOHx+4BPMGgXN2cIbqzRsHVlCjpcneNY76qklIiqXWWRlvEM64SD0ldYWi3k//tcvVttTbWbT9BWutIx94PjA42bLHqbp+1ceYBesOtnb246B4rs7P5B8bYFhEwmz31ilLaVrsMZI9neBnlF/2ypaRC8F6/TzSbON46vSq88gJyzosplEIoDyMpssbFDCjSeSp9Pe6sgNrBzHVfp8nPuW7bvtCKBOi4B8Oxga8kcYDN3ARnqqdGu6XVDLrcH2eOBT liuhao@LiuHaos-MacBook-Pro.local" >/home/$x/.ssh/authorized_keys
+    echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCjSz7VsnggRGPi1Sm2nMMcoyZKnulZBQrfGHRaPa9ACx68PY89mwauzA5+mvylFZetYTK2rCkPpLuvRR61Vs3wOHx+4BPMGgXN2cIbqzRsHVlCjpcneNY76qklIiqXWWRlvEM64SD0ldYWi3k//tcvVttTbWbT9BWutIx94PjA42bLHqbp+1ceYBesOtnb246B4rs7P5B8bYFhEwmz31ilLaVrsMZI9neBnlF/2ypaRC8F6/TzSbON46vSq88gJyzosplEIoDyMpssbFDCjSeSp9Pe6sgNrBzHVfp8nPuW7bvtCKBOi4B8Oxga8kcYDN3ARnqqdGu6XVDLrcH2eOBT liuhao@LiuHaos-MacBook-Pro.local" >>/root/.ssh/authorized_keys
+     fi
+
+   if [ $x = ${namelist[1]} ]; then
+    echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDC4TVlQPrNWaNfIThrgvc7bCnjiKP/WeWDuoEDnmhwh0qwEYtUR4sA1mwNsq6s+t1MK7h4bDMkRDd9oBECO4ZhBJXqktftdosw5AfRH1FYUQ5SB3PIiE9JnKH8j7bGtfJ9DHw2FCL81aOkjqd4S6KQ6qc9FWHN5aABiPRXeTwS3UFuoVMzJaiuYnwIA5dBPRXwa37910uwxxLAv0cCVA5N3av4N3TEGhor1pWRdVOlLvpBsU1nQ1rK5BBMoOIdio8zUat471CVtyiIlZ+X51ejFGFDm8qn6tX73gIi+a/ZAnfhKgViCj9SdU4DrnGkc/BoaJHuFq2EE8RLSVckHNtX zhe@wangshenyuedeAir.local" >/home/$x/.ssh/authorized_keys
+    echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDC4TVlQPrNWaNfIThrgvc7bCnjiKP/WeWDuoEDnmhwh0qwEYtUR4sA1mwNsq6s+t1MK7h4bDMkRDd9oBECO4ZhBJXqktftdosw5AfRH1FYUQ5SB3PIiE9JnKH8j7bGtfJ9DHw2FCL81aOkjqd4S6KQ6qc9FWHN5aABiPRXeTwS3UFuoVMzJaiuYnwIA5dBPRXwa37910uwxxLAv0cCVA5N3av4N3TEGhor1pWRdVOlLvpBsU1nQ1rK5BBMoOIdio8zUat471CVtyiIlZ+X51ejFGFDm8qn6tX73gIi+a/ZAnfhKgViCj9SdU4DrnGkc/BoaJHuFq2EE8RLSVckHNtX zhe@wangshenyuedeAir.local" >>/root/.ssh/authorized_keys
+     fi
+
+   if [ $x = ${namelist[2]} ]; then
+    echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD49o1035tuhBhaEO56beIwBATQI98RiAs84IrICo1pzV8arUDFmyKk1QliTuUf/rFCynbPQvx7JpPuiavqm+PggBMNzOCrNdGgwCFxnp5qFRMxbAlyV/5jGNEeg+Tv+DgCmEr7J0NzF7veVQh8rjbSHc3qJNIkuKzLvDDp0Tissr7xHU8TVTmVoExtBu69b7uWbKwlAGNbCQhqIA/962lDSyLN9txX/DgjU7vaBD1cnDKzX08g5/Grie2ftwFZ+mxwxdtuDD8iiJQUIMvYZ1mm0A3ThLobx/dQ0LGBuwIIkw9eESE9cWjIsTqLyAxZ65C83Vllij7/f+CgN8gVn9AF xuzheng@xuzhengdeMac-mini.local" >/home/$x/.ssh/authorized_keys
+    echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD49o1035tuhBhaEO56beIwBATQI98RiAs84IrICo1pzV8arUDFmyKk1QliTuUf/rFCynbPQvx7JpPuiavqm+PggBMNzOCrNdGgwCFxnp5qFRMxbAlyV/5jGNEeg+Tv+DgCmEr7J0NzF7veVQh8rjbSHc3qJNIkuKzLvDDp0Tissr7xHU8TVTmVoExtBu69b7uWbKwlAGNbCQhqIA/962lDSyLN9txX/DgjU7vaBD1cnDKzX08g5/Grie2ftwFZ+mxwxdtuDD8iiJQUIMvYZ1mm0A3ThLobx/dQ0LGBuwIIkw9eESE9cWjIsTqLyAxZ65C83Vllij7/f+CgN8gVn9AF xuzheng@xuzhengdeMac-mini.local" >>/root/.ssh/authorized_keys
+     fi
+
+   if [ $x = ${namelist[3]} ]; then
+    echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDF7Joa8QOQS/qnDpbM/im+Es3Au9uRGXHS1VIA/1wKCKU7N8sM/OeRczB60w+SpCcHXpSeYiuX81mAO5EaYpFH7wJhk/YyYwCe3gm7V65rSA5NWPX0I2sOMaJjNY0EOqmMeffQb49S33efyiYVUI75+yWkls0Q2ABLNNjTEldi9vUUpWTZ2Hqi0bGC8dqFSXcj/VeSu6n1ZUXt0t+M7VLSuLzu+Ok60O1QAZzHJrlT4oHic6jNKdZJmwthAg5++kb5YJp0Iyz0fqMdukvgCdg8XSePn32dHrzuam8Y9tk+K9KhNHqt47SryRahB3xRoTFvNbv9Z0ySzBzlUVWxk99l shiyiwan@ShiyideMBP.lan" >/home/$x/.ssh/authorized_keys
+    echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDF7Joa8QOQS/qnDpbM/im+Es3Au9uRGXHS1VIA/1wKCKU7N8sM/OeRczB60w+SpCcHXpSeYiuX81mAO5EaYpFH7wJhk/YyYwCe3gm7V65rSA5NWPX0I2sOMaJjNY0EOqmMeffQb49S33efyiYVUI75+yWkls0Q2ABLNNjTEldi9vUUpWTZ2Hqi0bGC8dqFSXcj/VeSu6n1ZUXt0t+M7VLSuLzu+Ok60O1QAZzHJrlT4oHic6jNKdZJmwthAg5++kb5YJp0Iyz0fqMdukvgCdg8XSePn32dHrzuam8Y9tk+K9KhNHqt47SryRahB3xRoTFvNbv9Z0ySzBzlUVWxk99l shiyiwan@ShiyideMBP.lan" >>/home/$x/.ssh/authorized_keys
+     fi
+
+   if [ $x = ${namelist[4]} ]; then
+    echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCwMlTzWvz2FQ2Fsx3TT/U5Z8WIpLuxc6GNwDqjHB9jRqwLTIzxzn6DzPQJ33EK2rVhtJS5mxUva7+vAjuGgbdGy6Rx0wm5RYYjig8GHlGcvj/77JenFo/LJvFvXS9vn2Dom92kbgsJvgJbi1WAsYC66MlpUMcWk2aJSgxi+zh63vuSeD4iE6wUyo6bMOAfZffPNzqgQQeoeVeJC19Ja5ObAY+q/arvjN64jnGE8vg8StC7mqEhIn4IoyV9Jh7cKLF1+sLIlTt2F7NvL4h4teSiB919AfAYT3KDTuC7N3d7Ne0NZ+lQMgXvDfF5iPo+wM98xfb02Qt7HCtS1S15sUnKA0jiwgGonRSiEbyCAnkV2n7mBAyaBviIsdn7CONvxuo9IZNhteQAM09qIXwtLJSQvRokDBlG/XeM4sHldwsTGmcNmHBjsmgTejeS9yPhZByy5sacJSh5nWnVN/sEytPbHQNJn6kGMHuZczbCEq3pyjqGWqqXNuTmCYeaAcOhxsnU6vnZ6OvTTNRILGBwiAbLOVeUzndn86YhYVLOv30KcsAwUQFG9m8lwv+xGb4MDO3QlZlIVOoiMFN2N1Q81Pbs0JGVZbvBtnyqWD7nfiLFpQ4Uq+dWs+J/wItR5phrye980xHd3fxH+buCKmnEtMTD05zitN1LsKLq41CLJRcv/w== zhuguangwenhust@gmail.com" >/home/$x/.ssh/authorized_keys
+    echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCwMlTzWvz2FQ2Fsx3TT/U5Z8WIpLuxc6GNwDqjHB9jRqwLTIzxzn6DzPQJ33EK2rVhtJS5mxUva7+vAjuGgbdGy6Rx0wm5RYYjig8GHlGcvj/77JenFo/LJvFvXS9vn2Dom92kbgsJvgJbi1WAsYC66MlpUMcWk2aJSgxi+zh63vuSeD4iE6wUyo6bMOAfZffPNzqgQQeoeVeJC19Ja5ObAY+q/arvjN64jnGE8vg8StC7mqEhIn4IoyV9Jh7cKLF1+sLIlTt2F7NvL4h4teSiB919AfAYT3KDTuC7N3d7Ne0NZ+lQMgXvDfF5iPo+wM98xfb02Qt7HCtS1S15sUnKA0jiwgGonRSiEbyCAnkV2n7mBAyaBviIsdn7CONvxuo9IZNhteQAM09qIXwtLJSQvRokDBlG/XeM4sHldwsTGmcNmHBjsmgTejeS9yPhZByy5sacJSh5nWnVN/sEytPbHQNJn6kGMHuZczbCEq3pyjqGWqqXNuTmCYeaAcOhxsnU6vnZ6OvTTNRILGBwiAbLOVeUzndn86YhYVLOv30KcsAwUQFG9m8lwv+xGb4MDO3QlZlIVOoiMFN2N1Q81Pbs0JGVZbvBtnyqWD7nfiLFpQ4Uq+dWs+J/wItR5phrye980xHd3fxH+buCKmnEtMTD05zitN1LsKLq41CLJRcv/w== zhuguangwenhust@gmail.com" >>/root/.ssh/authorized_keys
+     fi
+
+   if [ $x = ${namelist[5]} ]; then
+    echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8moexT243OZD0YAX4MT1v/gP91xsZw6NbiryXFfyv6PQwCkPmgelovSZp60EWUjc/E+8hPBlvuKAS6ocm5iNBzO7fZyxbMFHWX1f1eI1tHMNEx+YIMwZu4IJmqNan0FvkoBWMD1YQ3/d1KWmJ3Js+kffd+IrRIRMnc7HxfzOWqX4o6On7q9taUy949Ihg+BrP/CL9TK54b9iuo2oCAvb0mEgevbFcJ6yMwbntkDOjUrjF6fttPzvqwlHM8efiQ+aROazZpnlVETMWbYDXx6lDrn9MyE7O0whMHG/FwV1t6yjC4fAEDrqnamy626li/nDxW5XnUhCHhwVq6tWB4HJ7 xiaoying@xiaoyingdeMacBook-Air.local" >/home/$x/.ssh/authorized_keys
+    echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8moexT243OZD0YAX4MT1v/gP91xsZw6NbiryXFfyv6PQwCkPmgelovSZp60EWUjc/E+8hPBlvuKAS6ocm5iNBzO7fZyxbMFHWX1f1eI1tHMNEx+YIMwZu4IJmqNan0FvkoBWMD1YQ3/d1KWmJ3Js+kffd+IrRIRMnc7HxfzOWqX4o6On7q9taUy949Ihg+BrP/CL9TK54b9iuo2oCAvb0mEgevbFcJ6yMwbntkDOjUrjF6fttPzvqwlHM8efiQ+aROazZpnlVETMWbYDXx6lDrn9MyE7O0whMHG/FwV1t6yjC4fAEDrqnamy626li/nDxW5XnUhCHhwVq6tWB4HJ7 xiaoying@xiaoyingdeMacBook-Air.local" >>/root/.ssh/authorized_keys
+   fi
+
+   if [ $x = ${namelist[6]} ]; then
+    echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDMREY9fprcu9bUnHLe6cVizMJnInUVTl0uyUqvkOiHQzhjQxCMaHSLk2sdIosDwoTRigvJcJKgX+VqJO9FPY/BeB9zqv+YAn2BdlqtY4mtDhrFBtIeGaVMEzBSu1PWkKxgPeM9w7df2T3NXFOQUzxhvyR4QhP/VHy6/gHDG5VGpxwP5N5tpcrLcXh6gxvDYNcdafn/7brgmMPhO21icSZ5v3fyxbicg3/D2WKhUSugrcG0Bldh+CjD128pPmOLExzCdIolrmH1FL2AP+Z2I8qLuYz/U74NNhBnjiPbxxD+1PsDfjbCVC36HJfh7GRq48BLpnrLL/WOXrz5IxF4RMzL zhoucong50@gmail.com" >/home/$x/.ssh/authorized_keys
+    echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDMREY9fprcu9bUnHLe6cVizMJnInUVTl0uyUqvkOiHQzhjQxCMaHSLk2sdIosDwoTRigvJcJKgX+VqJO9FPY/BeB9zqv+YAn2BdlqtY4mtDhrFBtIeGaVMEzBSu1PWkKxgPeM9w7df2T3NXFOQUzxhvyR4QhP/VHy6/gHDG5VGpxwP5N5tpcrLcXh6gxvDYNcdafn/7brgmMPhO21icSZ5v3fyxbicg3/D2WKhUSugrcG0Bldh+CjD128pPmOLExzCdIolrmH1FL2AP+Z2I8qLuYz/U74NNhBnjiPbxxD+1PsDfjbCVC36HJfh7GRq48BLpnrLL/WOXrz5IxF4RMzL zhoucong50@gmail.com" >>/root/.ssh/authorized_keys
+   fi
+ done
+}
+addpubkey_record
+#7.copy wlast command for last command plus
+cat > /tmp/last.c << EOF
+#include <stdio.h>
+#include <utmp.h>
+#include <string.h>
+#include <time.h>
+
+int main(void) {
+        struct utmp *line;
+        time_t timestamp;
+        utmpname("/var/log/wtmp");
+        setutent();
+        while( (line = getutent()) != NULL) {
+                if (line->ut_type == USER_PROCESS ) {
+                        timestamp = line->ut_tv.tv_sec;
+                        printf("%s %s", line->ut_user, asctime(localtime(&timestamp)));
+                }
+        }
+        endutent();
+        return 0;
+}
+EOF
+gcc -Wall /tmp/last.c -o /usr/local/bin/wlast
+rm -f /tmp/last.c 
+which wlast
+service ssh restart
